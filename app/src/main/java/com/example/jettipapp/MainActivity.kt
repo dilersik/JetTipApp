@@ -1,5 +1,3 @@
-@file:OptIn(ExperimentalComposeUiApi::class)
-
 package com.example.jettipapp
 
 import android.os.Bundle
@@ -14,7 +12,6 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.CornerSize
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -23,13 +20,16 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Remove
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Slider
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableFloatStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
-import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
@@ -105,6 +105,7 @@ fun BillForm(modifier: Modifier = Modifier, onValChange: (String) -> Unit) {
     val totalBillSate = remember { mutableStateOf("") }
     val validState = remember(totalBillSate.value) { totalBillSate.value.trim().isNotEmpty() }
     val keyboardController = LocalSoftwareKeyboardController.current
+    var sliderPositionState by remember { mutableFloatStateOf(0f) }
 
     Surface(
         modifier = Modifier
@@ -119,6 +120,7 @@ fun BillForm(modifier: Modifier = Modifier, onValChange: (String) -> Unit) {
             horizontalAlignment = Alignment.Start
         ) {
             InputField(
+                modifier = Modifier.fillMaxWidth(),
                 valueState = totalBillSate,
                 labelId = "Enter Bill",
                 keyboardType = KeyboardType.Number,
@@ -129,15 +131,62 @@ fun BillForm(modifier: Modifier = Modifier, onValChange: (String) -> Unit) {
                 }
             )
 
-            if (validState) {
-                Row(modifier = Modifier.padding(3.dp), horizontalArrangement = Arrangement.Start) {
-                    Text(text = "Split", modifier = Modifier.align(alignment = Alignment.CenterVertically))
-                    Spacer(modifier = Modifier.width(120.dp))
+            Row(modifier = Modifier.padding(12.dp)) {
+                Column(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .weight(0.5f)
+                        .align(Alignment.CenterVertically)
+                ) {
+                    Text(text = "Split")
+                }
+
+                Column(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .weight(0.5f)
+                        .align(Alignment.CenterVertically)
+                ) {
                     Row(modifier = Modifier.padding(horizontal = 3.dp), horizontalArrangement = Arrangement.End) {
                         RoundIconButton(imageVector = Icons.Default.Remove, onClick = {})
+                        Text(
+                            text = "2",
+                            modifier = Modifier
+                                .align(Alignment.CenterVertically)
+                                .padding(start = 8.dp, end = 8.dp)
+                        )
                         RoundIconButton(imageVector = Icons.Default.Add, onClick = {})
                     }
                 }
+            }
+
+            Row(modifier = Modifier.padding(12.dp)) {
+                Column(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .weight(1f)
+                        .align(Alignment.CenterVertically)
+                ) {
+                    Text(text = "Tip")
+                }
+
+                Column(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .weight(1f)
+                        .align(Alignment.CenterVertically)
+                ) {
+                    Text(text = "$33.00")
+                }
+            }
+
+            Spacer(modifier = Modifier.height(12.dp))
+
+            Column(verticalArrangement = Arrangement.Center, horizontalAlignment = Alignment.CenterHorizontally) {
+                Text(text = "40%", style = MaterialTheme.typography.headlineMedium)
+                Slider(value = sliderPositionState, onValueChange = {
+                    sliderPositionState = it
+                })
             }
         }
     }
